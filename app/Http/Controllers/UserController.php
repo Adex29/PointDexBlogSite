@@ -114,10 +114,6 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // return response()->json($request->all());
-
-
-
         DB::beginTransaction();
 
         try {
