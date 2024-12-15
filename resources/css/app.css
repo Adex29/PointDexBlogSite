@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+    --primary-color: #6A9C89;
+    --secondary-color: #C4DAD2;
+    --overlay-color: #16423C;
+    --background-color: #E9EFEC;
+}
+
+.container-fluid{
+    padding: 0%;
+    margin: 0%;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+nav {
+    position: relative;
+    width: 250px;
+    background-color: var(--primary-color);
+    color: #2b0404;
+    z-index: 1000;
+}
+
+.nav-content{
+    position: fixed;
+    left: 20px;
+}
+
+.background{
+    background-color: var(--background-color);
+}
+
+.b-secondary{
+    background-color: var(--overlay-color);
+}
+
+.nav-background{
+    background-color: #1A3636;
+}
+
+.data-table-height {
+    height: 60vh;
+    /* overflow-y: scroll; */
+    /* overflow: hidden; */
+  }
+
+
+.clear-search{
+    position: absolute;
+    margin: auto;
+    cursor: pointer;
+    top: 0;
+    right: 20px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+/* #usersTable{
+    height: 60vh;
+} */
+
+a{
+    text-decoration: none;
+}
+
+.add-btn{
+    background-color: var(--overlay-color);
+    color: white;
+}
+
+.add-btn:hover{
+    background-color: var(--primary-color);
+    color: black;
+}
+.social-btn {
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 20px;
+    border-radius: 50%;
+}
