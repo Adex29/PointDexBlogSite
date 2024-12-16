@@ -5,6 +5,9 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import GoogleLoginBtn from '@/Components/GoogleLogin';
+
+
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -93,6 +96,15 @@ export default function Login({ status, canResetPassword }) {
                     <PrimaryButton className="ms-4" disabled={processing}>
                         Log in
                     </PrimaryButton>
+                </div>
+                <div className="d-flex align-items-center my-3">
+                    <hr className="flex-grow-1" />
+                    <p className="mx-3 mb-0">or</p>
+                    <hr className="flex-grow-1" />
+                </div>
+                <hr />
+                <div className='text-center'>
+                    <GoogleLoginBtn />
                 </div>
             </form>
         </GuestLayout>

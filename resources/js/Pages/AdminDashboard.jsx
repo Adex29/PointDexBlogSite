@@ -4,6 +4,7 @@ import $ from 'jquery';
 import 'datatables.net-bs5';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
 import csrfToken from '../Includes/csfrToken';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 import Navigation from '../Components/Navigation';
 import DateTimeNow from '../Components/DateTimeNow';
@@ -16,11 +17,22 @@ const AdminDashboard = () => {
         role: "user",
         password: "",
     });
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [deleteUserId, setDeleteUserId] = useState(null);
     const [alertMessage, setAlertMessage] = useState('');
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+        console.log(searchQuery);
+    };
+
+    const handleCategoryChange = (e) => {
+        setSelectedCategory(e.target.value);
+        console.log(e.target.value);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -106,6 +118,10 @@ const AdminDashboard = () => {
 
         if (!$.fn.dataTable.isDataTable(tableElement)) {
             tableElement.DataTable({
+                paging: false,
+                scrollY: "400px",
+                "dom": "lrtip",
+                scrollCollapse: true,
                 processing: true,
                 ajax: {
                     url: '/users',
@@ -130,6 +146,14 @@ const AdminDashboard = () => {
             });
         }
     }, []);
+
+    useEffect(() => {
+        $('#usersTable').DataTable().search(searchQuery).draw();
+    }, [searchQuery]);
+
+    useEffect(() => {
+        $('#usersTable').DataTable().column(3).search(selectedCategory).draw();
+    }, [selectedCategory]);
 
     useEffect(() => {
         $(document).on("click", ".edit-btn", function () {
@@ -159,7 +183,7 @@ const AdminDashboard = () => {
     }, []);
 
     return (
-        <>
+        <AuthenticatedLayout>
             <div className="d-flex">
                 <Navigation />
                 <div className="container-fluid background p-0">
@@ -180,20 +204,25 @@ const AdminDashboard = () => {
                         </div>
 
                         <div className="d-flex">
-                            <div className="col-4 position-relative">
+                            <div className="col-4 position-relative mb-3">
                                 <input
                                     type="text"
                                     placeholder="Search"
                                     className="form-control"
                                     id="searchInputUser"
+                                    // value={searchQuery}
+                                    onChange={handleSearchChange}
                                 />
                                 <span className="clear-search" id="clearUserSearch">
                                     <i className="fa fa-times" aria-hidden="true"></i>
                                 </span>
                             </div>
                             <div className="col-2 px-3">
-                                <select className="form-select" name="filter-role" id="filter-role">
-                                    <option selected value="all">All</option>
+                                <select className="form-select" name="filter-role" id="filter-role"
+                                    value={selectedCategory}
+                                    onChange={handleCategoryChange}>
+
+                                    <option selected value="">All</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
                                 </select>
@@ -338,7 +367,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
-        </>
+        </AuthenticatedLayout>
     );
 };
 

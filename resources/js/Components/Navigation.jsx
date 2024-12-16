@@ -11,7 +11,7 @@ const Navigation = () => {
                 </div>
                 <div className="d-flex flex-column justify-content-center">
                     <div className="nav-item p-3 nav-hover">
-                        <a href="/" className="d-flex align-items-center">
+                        <a href="/manageUser" className="d-flex align-items-center">
                             <i className="fas fa-users p-2 text-white nav-icon"></i>
                             <span className="text-white nav-text">Users</span>
                         </a>

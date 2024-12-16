@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import $ from 'jquery';
-// import Header from '../Components/Header';
 import Navigation from '../Components/Navigation';
 import DateTimeNow from '../Components/DateTimeNow';
 import { Editor } from '@tinymce/tinymce-react';
-// import Footer from '../Components/Footer';
-// import { useNavigate } from 'react-router-dom';
-// import './Posts.css'; // Assuming you're styling the component in this file
 
 import 'datatables.net-bs5';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
 import csrfToken from '../Includes/csfrToken';
 
-const PostDashboard = () => {
+const PostDashboard = (userid) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [deletePostId, setDeletePostId] = useState(null);
@@ -31,10 +27,12 @@ const PostDashboard = () => {
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
+        console.log(searchQuery);
     };
 
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
+        console.log(e);
     };
 
     const handleCreatePostClick = () => {
@@ -43,6 +41,7 @@ const PostDashboard = () => {
             title: '',
             category: 'news',
             summary: '',
+            userid: userid.userId,
             content: '',
             status: 'draft',
             img: null
@@ -54,6 +53,10 @@ const PostDashboard = () => {
 
         if (!$.fn.dataTable.isDataTable(tableElement)) {
             tableElement.DataTable({
+                paging: false,
+                scrollY: "400px",
+                "dom":"lrtip",
+                scrollCollapse: true,
                 processing: true,
                 ajax: {
                     url: '/posts',
@@ -99,12 +102,12 @@ const PostDashboard = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     setCurrentPost({
-                        id: data.post.id,
-                        title: data.post.title,
-                        category: data.post.category,
-                        summary: data.post.summary,
-                        content: data.post.content,
-                        status: data.post.status,
+                        id: data.posts.id,
+                        title: data.posts.title,
+                        category: data.posts.category,
+                        summary: data.posts.summary,
+                        content: data.posts.content,
+                        status: data.posts.status,
                     });
                     setIsModalOpen(true);
                 });
@@ -118,6 +121,14 @@ const PostDashboard = () => {
             setDeletePostId(postId);
         });
     }, [csrfToken, setIsUpdating, setIsModalOpen, setCurrentPost]);
+
+    useEffect(() => {
+        $('#postsTable').DataTable().search(searchQuery).draw();
+    }, [searchQuery]);
+
+    useEffect(() => {
+        $('#postsTable').DataTable().column(2).search(selectedCategory).draw();
+    }, [selectedCategory]);
 
 
 
@@ -213,7 +224,7 @@ const PostDashboard = () => {
                                 <DateTimeNow />
                             </div>
                         </div>
-                        <div className="d-flex">
+                        <div className="d-flex mb-3">
                             <div className="col-4 position-relative">
                                 <input
                                     type="text"
@@ -239,7 +250,7 @@ const PostDashboard = () => {
                                     value={selectedCategory}
                                     onChange={handleCategoryChange}
                                 >
-                                    <option value="all">All Categories</option>
+                                    <option value="">All Categories</option>
                                     <option value="news">News</option>
                                     <option value="updates">Updates</option>
                                     <option value="events">Events</option>

@@ -15,11 +15,21 @@ class PostController extends Controller
     public function index()
     {
         try{
-            $posts = Post::orderByDesc('id')->get();
+            $posts = DB::table('posts')
+            ->join('users', 'posts.userid', '=', 'users.id')
+            ->select('posts.*', 'users.name as author')
+            ->orderByDesc('posts.id')
+            ->get();
+
             return response()->json([
                 'status' => 'success',
                 'posts' => $posts
             ]);
+            // $posts = Post::orderByDesc('id')->get();
+            // return response()->json([
+            //     'status' => 'success',
+            //     'posts' => $posts
+            // ]);
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
@@ -67,7 +77,7 @@ class PostController extends Controller
                 'title' => $request->title,
                 'category' => $request->category,
                 'summary' => $request->summary,
-                'userid' => '5',  //  $request->user()->id
+                'userid' => $request->userid,
                 'content' => $request->content,
                 'status' => $request->status,
                 'img' => $imagePath,
@@ -97,19 +107,32 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        try{
-            $post = Post::find($id);
+        try {
+            $post = DB::table('posts')
+                ->join('users', 'posts.userid', '=', 'users.id')
+                ->select('posts.*', 'users.name as author')
+                ->where('posts.id', $id)
+                ->first();
+
+            if (!$post) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Post not found'
+                ], 404);
+            }
+
             return response()->json([
                 'status' => 'success',
-                'post' => $post
+                'posts' => $post
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred: ' . $e->getMessage()
             ], 500);
         }
     }
+
 
     /**
      * Show the form for editing the specified resource.

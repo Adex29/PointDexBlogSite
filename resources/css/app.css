@@ -1,6 +1,17 @@
+/* Import Bootstrap CSS */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* DaisyUI (as part of Tailwind, DaisyUI components build upon Tailwind) */
+/* @import 'daisyui'; */
+
+/* Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+
 
 
 :root {
