@@ -10,11 +10,14 @@ const Comments = ({ postId, userId }) => {
     const [likeCount, setLikeCount] = useState(0);
     const [hasLiked, setHasLiked] = useState(false);
 
-    // Fetch comments and like status on component mount or when postId changes
+    const isLoggedIn = !!userId;
+
     useEffect(() => {
         fetchComments();
-        fetchLikeStatus();
-    }, [postId]);
+        if (isLoggedIn) {
+            fetchLikeStatus();
+        }
+    }, [postId, isLoggedIn]);
 
     const fetchComments = async () => {
         try {
@@ -27,7 +30,7 @@ const Comments = ({ postId, userId }) => {
 
     const fetchLikeStatus = async () => {
         try {
-            const { likes, hasLiked } = await getLikeCount(csrfToken ,postId, userId);
+            const { likes, hasLiked } = await getLikeCount(csrfToken, postId, userId);
             setLikeCount(likes);
             setHasLiked(hasLiked);
         } catch (error) {
@@ -51,10 +54,10 @@ const Comments = ({ postId, userId }) => {
     const handleLikePost = async () => {
         try {
             if (hasLiked) {
-                await likePost(csrfToken ,postId, userId, false);
+                await likePost(csrfToken, postId, userId, false);
                 setLikeCount(likeCount - 1);
             } else {
-                await likePost(csrfToken ,postId, userId, true);
+                await likePost(csrfToken, postId, userId, true);
                 setLikeCount(likeCount + 1);
             }
             setHasLiked(!hasLiked);
@@ -69,50 +72,52 @@ const Comments = ({ postId, userId }) => {
                 <input type="checkbox" id="collapse-comment" />
                 <label className="du-collapse-title text-xl font-medium" htmlFor="collapse-comment">
                     {userComments.length} Comments || {likeCount} Likes
-                    {/* {userComments.length} Comments || 29 Likes */}
                 </label>
 
                 <div className="du-collapse-content">
-                    <form onSubmit={handleCommentSubmit}>
-
-                        <textarea
-                            className="du-textarea du-textarea-bordered w-11/12 mx-auto"
-                            value={comment.content}
-                            onChange={(e) => setComment({ content: e.target.value })}
-                            placeholder="Add a comment"
-                        />
-                        <div className='text-center flex justify-center'>
-                            <div className="mx-2">
-                                <button className="du-btn du-btn-primary my-3">Add Comment</button>
+                    {isLoggedIn ? (
+                        <form onSubmit={handleCommentSubmit}>
+                            <textarea
+                                className="du-textarea du-textarea-bordered w-11/12 mx-auto"
+                                value={comment.content}
+                                onChange={(e) => setComment({ content: e.target.value })}
+                                placeholder="Add a comment"
+                            />
+                            <div className="text-center flex justify-center">
+                                <div className="mx-2">
+                                    <button className="du-btn du-btn-primary my-3" type="submit">
+                                        Add Comment
+                                    </button>
+                                </div>
+                                <div className="mx-2">
+                                    <button
+                                        type="button"
+                                        onClick={handleLikePost}
+                                        className={`du-btn ${hasLiked ? 'du-btn-danger' : 'du-btn-primary'} my-3`}
+                                    >
+                                        {hasLiked ? 'Unlike Post' : 'Like Post'}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="mx-2">
-                                <button
-                                    type="button"
-                                    onClick={handleLikePost}
-                                    className={`du-btn ${hasLiked ? 'du-btn-danger' : 'du-btn-primary'} my-3`}
-                                >
-                                    {hasLiked ? 'Unlike Post' : 'Like Post'}
-                                </button>
-                            </div>
-                        </div>
+                        </form>
+                    ) : (
+                        <p className="text-center text-gray-500">
+                            You need to <a href="/login" className="du-link du-link-primary">log in</a> to comment and like.
+                        </p>
+                    )}
 
-                    </form>
-
-                    {
-                        userComments.length > 0 ? (
-                            userComments.map((userComment) => (
-                                <CommentBuilder
-                                    key={userComment.id}
-                                    author={userComment.author}
-                                    createdAt={userComment.created_at}
-                                    comment={userComment.comment}
-                                />
-                            ))
-                        ) : (
-                            <p className="text-center">No comments yet. Be the first to comment!</p>
-                        )
-                    }
-
+                    {userComments.length > 0 ? (
+                        userComments.map((userComment) => (
+                            <CommentBuilder
+                                key={userComment.id}
+                                author={userComment.author}
+                                createdAt={userComment.created_at}
+                                comment={userComment.comment}
+                            />
+                        ))
+                    ) : (
+                        <p className="text-center">No comments yet. Be the first to comment!</p>
+                    )}
                 </div>
             </div>
         </div>

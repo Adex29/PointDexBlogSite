@@ -12,31 +12,38 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        try{
-            $posts = DB::table('posts')
-            ->join('users', 'posts.userid', '=', 'users.id')
-            ->select('posts.*', 'users.name as author')
-            ->orderByDesc('posts.id')
-            ->get();
+    public function index(Request $request){
+        try {
+            $searchQuery = $request->query('search');
+
+            $query = DB::table('posts')
+                ->join('users', 'posts.userid', '=', 'users.id')
+                ->select('posts.*', 'users.name as author')
+                ->orderByDesc('posts.id');
+
+            if ($searchQuery) {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where('posts.title', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('posts.category', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('posts.summary', 'like', '%' . $searchQuery . '%');
+                });
+            }
+
+            $posts = $query->get();
 
             return response()->json([
                 'status' => 'success',
                 'posts' => $posts
             ]);
-            // $posts = Post::orderByDesc('id')->get();
-            // return response()->json([
-            //     'status' => 'success',
-            //     'posts' => $posts
-            // ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred: ' . $e->getMessage()
             ], 500);
         }
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -150,7 +157,6 @@ class PostController extends Controller
         DB::beginTransaction();
 
         try {
-            // Validate incoming request
             $request->validate([
                 'title' => 'required|string|max:255',
                 'category' => 'required|string|max:255',

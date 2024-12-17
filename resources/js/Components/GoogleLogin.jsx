@@ -7,22 +7,24 @@ const GoogleLoginBtn = () => {
         const googleToken = credentialResponse.credential;
 
         try {
-
-            const response = await axios.post('/api/auth/google', { token: googleToken });
-            console.log('User authenticated:', response.data);
+            const response = await axios.post('/auth/google', { token: googleToken });
+            if (response.data.success) {
+                window.location.href = response.data.redirect_url;
+            }
         } catch (error) {
-            console.error('Error authenticating user:', error);
-            console.log('Authentication failed:', error);
+            console.error('Error authenticating user:', error.response || error.message);
         }
+    };
+
+    const handleLoginError = () => {
+        console.error('Login failed');
     };
 
     return (
         <GoogleOAuthProvider clientId="286853462386-8ksqu3nu5vf9agha6dt4b10b53br7ejn.apps.googleusercontent.com">
             <GoogleLogin
-                onSuccess={handleLoginSuccess}
-                onError={() => {
-                    console.log('Login Failed');
-                }}
+                onSuccess={credentialResponse => handleLoginSuccess(credentialResponse)}
+                onError={handleLoginError}
                 useOneTap
             />
         </GoogleOAuthProvider>

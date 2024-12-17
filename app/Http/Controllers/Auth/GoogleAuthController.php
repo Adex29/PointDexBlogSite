@@ -1,22 +1,21 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use Google_Client;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Illuminate\Http\JsonResponse;
 
 class GoogleAuthController extends Controller
 {
-    public function handleGoogleLogin(Request $request)
+    public function handleGoogleLogin(Request $request): JsonResponse
     {
-        // The token from the frontend
         $googleToken = $request->input('token');
 
         // Set up the Google client to verify the token
-        // $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]); // Set your Google Client ID here
         $client = new Google_Client(['client_id' => '286853462386-8ksqu3nu5vf9agha6dt4b10b53br7ejn.apps.googleusercontent.com']); // Replace with your actual Client ID
 
         try {
@@ -25,20 +24,27 @@ class GoogleAuthController extends Controller
             if ($payload) {
                 // The token is valid; now we can authenticate the user
 
-                // Check if the user already exists in the database
-                $user = User::firstOrCreate(
-                    ['email' => $payload['email']],  // Check by email
-                    [
-                        'name' => $payload['name'],
-                        'google_id' => $payload['sub'], // Store Google ID
-                    ]
-                );
+                // Check if the user already exists by email
+                $user = User::where('email', $payload['email'])->first();
 
-                // Log the user in
+                if (!$user) {
+                    // If the user does not exist, create the user
+                    $user = User::create([
+                        'name' => $payload['name'],
+                        'email' => $payload['email'],
+                        'role' => 'user',
+                        'method' => 'google',
+                    ]);
+                }
+
+                // Log in the user
                 Auth::login($user);
 
-                // Respond with the authenticated user
-                return response()->json(['message' => 'User authenticated', 'user' => $user], 200);
+                // Return a JSON response with a redirect URL to be handled on the frontend
+                return response()->json([
+                    'success' => true,
+                    'redirect_url' => route('user.home') // or the appropriate route for the user
+                ]);
             } else {
                 return response()->json(['message' => 'Invalid Google token'], 400);
             }

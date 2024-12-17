@@ -9,6 +9,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AuthenticatedUserController;
 
 Route::get('/', function () {
     return Inertia::render('UserHome', [
@@ -38,13 +39,25 @@ Route::get('/blog/{id}', function ($id) {
     ]);
 });
 
+Route::get('/home', function () {
+    return Inertia::render('UserHome');
+})->name('user.home');
+
 // User and Post Resource Routes
 Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
-    Route::resource('posts', PostController::class);
-    Route::resource('likes', LikeController::class);
-    Route::resource('comments', CommentController::class);
+    Route::post('likes', [LikeController::class, 'store'])->name('likes.store');
+    Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+
+Route::get('comments/{comment}', [CommentController::class, 'show'])->name('comments.show');
+Route::get('likes', [LikeController::class, 'index'])->name('likes.index');
+Route::get('/getAuthenticatedUser', [AuthenticatedUserController::class, 'getAuthenticatedUser']);
+
+Route::resource('posts', PostController::class);
+// Route::resource('likes', LikeController::class);
+// Route::resource('comments', CommentController::class);
 
 // Dashboard Route
 Route::get('/dashboard', function () {
@@ -60,3 +73,5 @@ Route::middleware('auth')->group(function () {
 
 // Authentication Routes
 require __DIR__.'/auth.php';
+
+require __DIR__.'/api.php';
