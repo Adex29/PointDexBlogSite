@@ -25,6 +25,7 @@
         "@react-oauth/google": "^0.12.1",
         "@tinymce/tinymce-react": "^5.1.1",
         "date-fns": "^4.1.0",
+        "react-facebook": "^9.0.12",
         "react-router-dom": "^7.0.2",
         "tinymce": "^7.6.0"
     }

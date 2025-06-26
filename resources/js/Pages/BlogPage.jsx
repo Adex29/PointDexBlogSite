@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import UserNavbar from '@/Components/UserNavbar';
 import UserFooter from '@/Components/UserFooter';
-import fetchUserPosts from '@/functions/getUserPosts';
+import {fetchUserPosts} from '@/functions/getUserPosts';
 import Skeleton from '@/Components/skeleton';
 import Comments from '@/Components/comments';
 import csrfToken from '@/Includes/csfrToken';

@@ -6,6 +6,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import GoogleLoginBtn from '@/Components/GoogleLogin';
+import FbBTN from '@/Components/Facebook';
 
 
 
@@ -102,9 +103,19 @@ export default function Login({ status, canResetPassword }) {
                     <p className="mx-3 mb-0">or</p>
                     <hr className="flex-grow-1" />
                 </div>
+                <div>
+                    <a href='register' className='btn btn-primary text-center'>
+                        <button type="button">
+                            Sign Up
+                        </button>
+                    </a>
+                    </div>
                 <hr />
                 <div className='text-center'>
                     <GoogleLoginBtn />
+                </div>
+                <div className='text-center'>
+                    <FbBTN />
                 </div>
             </form>
         </GuestLayout>

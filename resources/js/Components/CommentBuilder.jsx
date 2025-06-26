@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 
 const CommentBuilder = ({ author, createdAt, comment }) => {
-    const formattedDate = format(new Date(createdAt), "p MMMM dd, yyyy"); // e.g., "4:00 PM October 29, 2024"
+    const formattedDate = format(new Date(createdAt), "p MMMM dd, yyyy");
 
     return (
         <div role="alert" className="du-alert shadow-md w-screen mb-3 mr-5">

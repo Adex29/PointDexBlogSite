@@ -4,8 +4,6 @@ import $ from 'jquery';
 import 'datatables.net-bs5';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
 import csrfToken from '../Includes/csfrToken';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-
 import Navigation from '../Components/Navigation';
 import DateTimeNow from '../Components/DateTimeNow';
 
@@ -104,7 +102,7 @@ const AdminDashboard = () => {
             if (response.ok) {
                 const table = $("#usersTable").DataTable();
                 table.ajax.reload(null, false);
-                setDeleteUserId(null); // Close modal
+                setDeleteUserId(null);
             } else {
                 console.error("Failed to delete user.");
             }
@@ -183,7 +181,7 @@ const AdminDashboard = () => {
     }, []);
 
     return (
-        <AuthenticatedLayout>
+        <>
             <div className="d-flex">
                 <Navigation />
                 <div className="container-fluid background p-0">
@@ -367,7 +365,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
-        </AuthenticatedLayout>
+        </>
     );
 };
 

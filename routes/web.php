@@ -17,20 +17,23 @@ Route::get('/', function () {
     ]);
 });
 
-// Manage User Dashboard
 Route::get('/manageUser', function () {
-    return Inertia::render('AdminDashboard', [
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    if (Auth::check() && Auth::user()->role === 'admin') {
+        return Inertia::render('AdminDashboard', []);
+    }
+    return redirect()->route('user.home');
 })->middleware('auth')->name('manageUser');
 
-// Manage Post Dashboard
+
 Route::get('/managePost', function () {
-    return Inertia::render('PostDashboard', [
-        'userId' => Auth::id(),
-    ]);
+    if (Auth::check() && Auth::user()->role === 'admin') {
+        return Inertia::render('PostDashboard', [
+            'userId' => Auth::id(),
+        ]);
+    }
+    return redirect()->route('user.home');
 })->middleware('auth')->name('managePost');
+
 
 Route::get('/blog/{id}', function ($id) {
     return Inertia::render('BlogPage', [
@@ -43,11 +46,16 @@ Route::get('/home', function () {
     return Inertia::render('UserHome');
 })->name('user.home');
 
+Route::get('/contact', function () {
+    return Inertia::render('Contact');
+})->name('user.contact');
+
 // User and Post Resource Routes
 Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::post('likes', [LikeController::class, 'store'])->name('likes.store');
     Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+
 });
 
 
@@ -59,9 +67,9 @@ Route::resource('posts', PostController::class);
 // Route::resource('likes', LikeController::class);
 // Route::resource('comments', CommentController::class);
 
-// Dashboard Route
+
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('UserHome');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Profile Routes

@@ -24,10 +24,8 @@ const fetchUserPosts = async (csrfToken, postId = null, setPosts, setLoading) =>
     }
   };
 
-const handleSearch = async (searchInput, setRecentPosts, setLoading , csrfToken) => {
+  const handleSearch = async (searchInput, setRecentPosts, csrfToken) => {
     const searchUrl = searchInput ? `/posts?search=${encodeURIComponent(searchInput)}` : "/posts";
-
-    setLoading(true);
 
     try {
         const response = await fetch(searchUrl, {
@@ -46,10 +44,9 @@ const handleSearch = async (searchInput, setRecentPosts, setLoading , csrfToken)
         }
     } catch (error) {
         console.error("Error during search:", error);
-    } finally {
-        setLoading(false);
     }
 };
+
 
 export { fetchUserPosts, handleSearch };
 
